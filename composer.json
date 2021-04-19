@@ -1,0 +1,57 @@
+{
+    "name": "thotam/thotam-gmail",
+    "description": "Gmail API Manager Package",
+    "keywords": [
+        "thotam",
+        "thotam-gmail"
+    ],
+    "homepage": "https://github.com/thotam/thotam-gmail",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "thotam",
+            "email": "thanhtamtqno1@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0",
+        "illuminate/console": "^8.0",
+        "illuminate/contracts": "^8.0",
+        "illuminate/support": "^8.0",
+        "google/apiclient": "^2.2"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Thotam\\ThotamGmail\\": "src",
+            "Thotam\\ThotamGmail\\Database\\Seeders\\": "database/seeders"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Thotam\\ThotamGmail\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Thotam\\ThotamGmail\\ThotamGmailServiceProvider"
+            ],
+            "aliases": {
+                "ThotamGmail": "Thotam\\ThotamGmail\\ThotamGmailFacade"
+            }
+        }
+    }
+}
