@@ -17,13 +17,29 @@ composer require thotam/thotam-gmail
 
 ## Usage
 
-``` php
-// Usage description here
+### Add this to .env
+
+```php
+DEFAULT_GOOGLE_CLIENT_ID=""
+DEFAULT_GOOGLE_CLIENT_SECRET=""
+DEFAULT_GOOGLE_REFRESH_TOKEN=""
+```
+
+### Add HasMailTraits to you Model you want to you
+
+```php
+use Thotam\ThotamGmail\Traits\HasMailTraits;
+```
+
+### How to send and reply
+
+```php
+use Thotam\ThotamGmail\Services\Message\Mail
 ```
 
 ### Testing
 
-``` bash
+```bash
 composer test
 ```
 
@@ -41,8 +57,8 @@ If you discover any security related issues, please email thanhtamtqno1@gmail.co
 
 ## Credits
 
-- [thotam](https://github.com/thotam)
-- [All Contributors](../../contributors)
+-   [thotam](https://github.com/thotam)
+-   [All Contributors](../../contributors)
 
 ## License
 
