@@ -21,7 +21,7 @@ trait HasHeaders
 		$value = null;
 
 		foreach ($headers as $header) {
-			if ($header->key === $headerName) {
+			if (strtoupper($header->key) === strtoupper($headerName)) {
 				$value = $header->value;
 				if (!is_null($regex)) {
 					preg_match_all($regex, $header->value, $value);

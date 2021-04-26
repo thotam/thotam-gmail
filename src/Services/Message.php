@@ -35,6 +35,8 @@ class Message
         $me = $this->service->users->getProfile("me");
         if (property_exists($me, 'emailAddress')) {
             $this->emailAddress = $me->emailAddress;
+        } else {
+            throw new \Exception('Cannot get emailAddress, please check config');
         }
 	}
 }
