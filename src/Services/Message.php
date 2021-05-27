@@ -27,6 +27,17 @@ class Message
 
 	public function __construct($refreshToken = NULL, $clientSecret = NULL, $clientId = NULL)
 	{
+
+        if (!!!$refreshToken) {
+            $refreshToken = config('thotam-gmail.mail.refreshToken');
+        }
+        if (!!!$clientSecret) {
+            $clientSecret = config('thotam-gmail.mail.clientSecret');
+        }
+        if (!!!$clientId) {
+            $clientId = config('thotam-gmail.mail.clientId');
+        }
+
 		$this->client = new Google_Client();
         $this->setClientSecret($clientSecret);
         $this->setClientId($clientId);
