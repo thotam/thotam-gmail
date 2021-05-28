@@ -20,9 +20,9 @@ composer require thotam/thotam-gmail
 ### Add this to .env
 
 ```php
-DEFAULT_GOOGLE_CLIENT_ID=""
-DEFAULT_GOOGLE_CLIENT_SECRET=""
-DEFAULT_GOOGLE_REFRESH_TOKEN=""
+DEFAULT_GOOGLE_MAIL_CLIENT_ID=""
+DEFAULT_GOOGLE_MAIL_CLIENT_SECRET=""
+DEFAULT_GOOGLE_MAIL_REFRESH_TOKEN=""
 ```
 
 ### Add HasMailTraits to you Model you want to you
