@@ -375,9 +375,23 @@ trait Mailable
 	{
 		$threadId = $this->getThreadId();
 		if ($threadId) {
-			$this->setHeader('In-Reply-To', $this->getHeader('In-Reply-To'));
-			$this->setHeader('References', $this->getHeader('References'));
-			$this->setHeader('Message-ID', $this->getHeader('Message-ID'));
+            $References = $this->getHeader('References');
+            $Message_ID = $this->getHeader('Message-ID');
+            $In_Reply_To = $this->getHeader('In-Reply-To');
+
+            if (!!$References) {
+                $References .= " ".$Message_ID;
+            } else {
+                $References = $Message_ID;
+            }
+
+            if (!!!$In_Reply_To) {
+                $In_Reply_To = $Message_ID;
+            }
+
+			$this->setHeader('In-Reply-To', $In_Reply_To);
+			$this->setHeader('References', $References);
+			$this->setHeader('Message-ID', $Message_ID);
 		}
 	}
 
