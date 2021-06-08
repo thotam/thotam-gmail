@@ -13,7 +13,7 @@ trait ClientTraits
     public function refreshToken($refreshToken = NULL)
     {
         if ($refreshToken == null) {
-            $this->client->refreshToken(env('DEFAULT_GOOGLE_REFRESH_TOKEN'));
+            $this->client->refreshToken(config('thotam-gmail.mail.refreshToken'));
         } else {
             $this->client->refreshToken($refreshToken);
         }
@@ -26,7 +26,7 @@ trait ClientTraits
     public function setClientId($clientId = NULL)
     {
         if ($clientId == null) {
-            $this->client->setClientId(env('DEFAULT_GOOGLE_CLIENT_ID'));
+            $this->client->setClientId(config('thotam-gmail.mail.clientId'));
         } else {
             $this->client->setClientId($clientId);
         }
@@ -39,7 +39,7 @@ trait ClientTraits
     public function setClientSecret($clientSecret = NULL)
     {
         if ($clientSecret == null) {
-            $this->client->setClientSecret(env('DEFAULT_GOOGLE_CLIENT_SECRET'));
+            $this->client->setClientSecret(config('thotam-gmail.mail.clientSecret'));
         } else {
             $this->client->setClientSecret($clientSecret);
         }
