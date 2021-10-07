@@ -104,7 +104,7 @@ class SeedServiceProvider extends ServiceProvider
         if (is_array($namespaceLines)) {
             $namespaceLine = array_shift($namespaceLines);
             $match = array();
-            preg_match('/^namespace (.*);$/', $namespaceLine, $match);
+            preg_match('/(?<=namespace )(.*)(?=;)/', $namespaceLine, $match);
             $namespace = array_pop($match);
         }
 
