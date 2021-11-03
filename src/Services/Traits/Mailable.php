@@ -466,6 +466,8 @@ trait Mailable
                 preg_match('/<(.*)>/', $c, $matches);
 
                 $name = preg_replace('/ <(.*)>/', '', $c);
+                $name = preg_replace('/"|\\\\/', '', $name);
+
                 if (isset($matches[1])) {
                     $this->cc[$matches[1]] = $name;
                 }
@@ -488,6 +490,8 @@ trait Mailable
                 preg_match('/<(.*)>/', $bcc, $matches);
 
                 $name = preg_replace('/ <(.*)>/', '', $bcc);
+                $name = preg_replace('/"|\\\\/', '', $name);
+
                 if (isset($matches[1])) {
                     $this->bcc[$matches[1]] = $name;
                 }

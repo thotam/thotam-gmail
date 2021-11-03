@@ -206,6 +206,7 @@ class Mail extends Message
 		preg_match('/<(.*)>/', $from, $matches);
 
 		$name = preg_replace('/ <(.*)>/', '', $from);
+        $name = preg_replace('/"|\\\\/', '', $name);
 
 		return [
 			'name'  => $name,
@@ -241,6 +242,7 @@ class Mail extends Message
 		$from = $this->getHeader('From');
 
 		$name = preg_replace('/ <(.*)>/', '', $from);
+        $name = preg_replace('/"|\\\\/', '', $name);
 
 		return $name;
 	}
@@ -302,6 +304,7 @@ class Mail extends Message
 			$item['email'] = str_replace(' ', '', isset($matches[1]) ? $matches[1] : $email);
 
 			$name = preg_replace('/ <(.*)>/', '', $email);
+            $name = preg_replace('/"|\\\\/', '', $name);
 
 			if (Str::startsWith($name, ' ')) {
 				$name = substr($name, 1);
