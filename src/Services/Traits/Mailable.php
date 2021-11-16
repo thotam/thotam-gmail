@@ -9,6 +9,7 @@ use Google_Service_Gmail_Message;
 use Thotam\ThotamGmail\Services\Message\Mail;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 /**
  * @property Google_Service_Gmail $service
@@ -431,7 +432,9 @@ trait Mailable
             } else {
                 $replyTo = $this->getReplyTo();
 
-                $this->to[$replyTo['email']] = $replyTo['name'];
+                if (!!$replyTo['email'] && Str::contains($replyTo['email'], '@')) {
+                    $this->to[$replyTo['email']] = $replyTo['name'];
+                }
 
                 $this->to = Arr::where($this->to, function ($value, $key) {
                     return ($key != $this->getUser()) && ($key != "mailer-daemon@googlemail.com");
