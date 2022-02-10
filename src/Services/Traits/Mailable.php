@@ -2,14 +2,15 @@
 
 namespace Thotam\ThotamGmail\Services\Traits;
 
-use Swift_Message;
 use Swift_Attachment;
 use Google_Service_Gmail;
-use Google_Service_Gmail_Message;
-use Thotam\ThotamGmail\Services\Message\Mail;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Google_Service_Gmail_Message;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Address;
+use Thotam\ThotamGmail\Services\Message\Mail;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * @property Google_Service_Gmail $service
@@ -87,7 +88,7 @@ trait Mailable
 
 	public function __construct()
 	{
-		$this->swiftMessage = new Swift_Message();
+        $this->swiftMessage = new Email();
 	}
 
 	/**
@@ -109,11 +110,11 @@ trait Mailable
         if (is_array($to)) {
             $this->to = $to;
         } else {
-            $this->to = [];
             if (is_null($name)) {
                 $name = explode('@', $to)[0];
             }
-            $this->to[$to] = $name;
+
+            $this->to[] = new Address($to, $name);
         }
 
 		return $this;
@@ -137,13 +138,13 @@ trait Mailable
 	{
         if (is_array($to)) {
             foreach ($to as $email => $email_name) {
-                $this->to[$email] = $email_name;
+                $this->to[] = new Address($email, $email_name);
             }
         } else {
             if (is_null($name)) {
                 $name = explode('@', $to)[0];
             }
-            $this->to[$to] = $name;
+            $this->to[] = new Address($to, $name);
         }
 
 		return $this;
@@ -152,11 +153,10 @@ trait Mailable
 	public function setFrom($name = null)
 	{
         $from = $this->getUser();
-        $this->from = [];
         if (is_null($name)) {
             $name = explode('@', $from)[0];
         }
-        $this->from[$from] = $name;
+        $this->from = new Address($from, $name);
 
 		return $this;
 	}
@@ -173,11 +173,10 @@ trait Mailable
         if (is_array($cc)) {
             $this->cc = $cc;
         } else {
-            $this->cc = [];
             if (is_null($name)) {
                 $name = explode('@', $cc)[0];
             }
-            $this->cc[$cc] = $name;
+            $this->cc[] = new Address($cc, $name);
         }
 
 		return $this;
@@ -194,13 +193,13 @@ trait Mailable
     {
         if (is_array($cc)) {
             foreach ($cc as $email => $email_name) {
-                $this->cc[$email] = $email_name;
+                $this->cc[] = new Address($email, $email_name);
             }
         } else {
             if (is_null($name)) {
                 $name = explode('@', $cc)[0];
             }
-            $this->cc[$cc] = $name;
+            $this->cc[] = new Address($cc, $name);
         }
 
 		return $this;
@@ -218,11 +217,10 @@ trait Mailable
         if (is_array($bcc)) {
             $this->bcc = $bcc;
         } else {
-            $this->bcc = [];
             if (is_null($name)) {
                 $name = explode('@', $bcc)[0];
             }
-            $this->bcc[$bcc] = $name;
+            $this->bcc[] = new Address($bcc, $name);
         }
 
 		return $this;
@@ -239,13 +237,13 @@ trait Mailable
 	{
         if (is_array($bcc)) {
             foreach ($bcc as $email => $email_name) {
-                $this->bcc[$email] = $email_name;
+                $this->bcc[] = new Address($email, $email_name);
             }
         } else {
             if (is_null($name)) {
                 $name = explode('@', $bcc)[0];
             }
-            $this->bcc[$bcc] = $name;
+            $this->bcc[] = new Address($bcc, $name);
         }
 
 		return $this;
@@ -392,7 +390,9 @@ trait Mailable
 
 			$this->setHeader('In-Reply-To', $In_Reply_To);
 			$this->setHeader('References', $References);
-			$this->setHeader('Message-ID', $Message_ID);
+			//$this->setHeader('Message-ID', $Message_ID);
+            //dd($Message_ID);
+
 		}
 	}
 
@@ -432,13 +432,9 @@ trait Mailable
             } else {
                 $replyTo = $this->getReplyTo();
 
-                if (!!$replyTo['email'] && Str::contains($replyTo['email'], '@')) {
-                    $this->to[$replyTo['email']] = $replyTo['name'];
+                if (!!$replyTo['email'] && Str::contains($replyTo['email'], '@') && $replyTo['email'] != $this->getUser() && $replyTo['email'] != "mailer-daemon@googlemail.com") {
+                    $this->to[] = new Address($replyTo['email'], $replyTo['name']);
                 }
-
-                $this->to = Arr::where($this->to, function ($value, $key) {
-                    return ($key != $this->getUser()) && ($key != "mailer-daemon@googlemail.com");
-                });
             }
 		}
 	}
@@ -455,6 +451,7 @@ trait Mailable
 
 	private function setReplyCc()
 	{
+        $temp_cc = [];
         foreach ($this->messages as $message) {
             $this->setMessage($message);
 
@@ -472,18 +469,24 @@ trait Mailable
                 $name = preg_replace('/"|\\\\/', '', $name);
 
                 if (isset($matches[1])) {
-                    $this->cc[$matches[1]] = $name;
+                    $temp_cc[$matches[1]] = $name;
                 }
             }
         }
-        $this->cc = array_unique($this->cc);
-        $this->cc = Arr::where($this->cc, function ($value, $key) {
+
+        $temp_cc = array_unique($temp_cc);
+        $temp_cc = Arr::where($temp_cc, function ($value, $key) {
             return ($key != $this->getUser()) && ($key != "mailer-daemon@googlemail.com");
         });
+
+        foreach ($temp_cc as $cc_email => $cc_name) {
+            $this->cc[] = new Address($cc_email, $cc_name);
+        }
 	}
 
 	private function setReplyBcc()
 	{
+        $temp_bcc = [];
         foreach ($this->messages as $message) {
             $this->setMessage($message);
             $bccs = $this->getHeader('BCC');
@@ -496,15 +499,19 @@ trait Mailable
                 $name = preg_replace('/"|\\\\/', '', $name);
 
                 if (isset($matches[1])) {
-                    $this->bcc[$matches[1]] = $name;
+                    $temp_bcc[$matches[1]] = $name;
                 }
             }
         }
-        $this->bcc = array_unique($this->bcc);
+        $temp_bcc = array_unique($temp_bcc);
 
-        $this->bcc = Arr::where($this->bcc, function ($value, $key) {
+        $temp_bcc = Arr::where($temp_bcc, function ($value, $key) {
             return ($key != $this->getUser()) && ($key != "mailer-daemon@googlemail.com");
         });
+
+        foreach ($temp_bcc as $bcc_email => $bcc_name) {
+            $this->bcc[] = new Address($bcc_email, $bcc_name);
+        }
 	}
 
 	public abstract function getSubject();
@@ -522,14 +529,31 @@ trait Mailable
 	{
 		$body = new Google_Service_Gmail_Message();
 
+        if (is_array($this->to) && count($this->to) == 0) {
+            $this->to = NULL;
+        }
+        if (is_array($this->cc) && count($this->cc) == 0) {
+            $this->cc = NULL;
+        }
+        if (is_array($this->bcc) && count($this->bcc) == 0) {
+            $this->bcc = NULL;
+        }
+
 		$this->swiftMessage
-			->setSubject($this->subject)
-			->setFrom($this->from)
-			->setTo($this->to)
-			->setCc($this->cc)
-			->setBcc($this->bcc)
-			->setBody($this->message, 'text/html')
-			->setPriority($this->priority);
+			->subject($this->subject)
+			->from($this->from)
+			->html($this->message, 'text/html')
+			->priority($this->priority);
+
+        if ((bool)$this->to) {
+            $this->swiftMessage->to(...$this->to);
+        }
+        if ((bool)$this->cc) {
+            $this->swiftMessage->cc(...$this->cc);
+        }
+        if ((bool)$this->bcc) {
+            $this->swiftMessage->bcc(...$this->bcc);
+        }
 
 		foreach ($this->attachments as $file) {
 			$this->swiftMessage
