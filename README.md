@@ -26,6 +26,7 @@ DEFAULT_GOOGLE_MAIL_REFRESH_TOKEN=""
 SurveyMail_GOOGLE_MAIL_REFRESH_TOKEN=""
 BuddyMail_GOOGLE_MAIL_REFRESH_TOKEN=""
 KbytMail_GOOGLE_MAIL_REFRESH_TOKEN=""
+TuyendungMail_GOOGLE_MAIL_REFRESH_TOKEN=""
 ```
 
 ### Add HasMailTraits to you Model you want to you
