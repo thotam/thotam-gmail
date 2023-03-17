@@ -13,5 +13,6 @@ return [
         'buddyRefreshToken' => env('BuddyMail_GOOGLE_MAIL_REFRESH_TOKEN', null),
         'kbytRefreshToken' => env('KbytMail_GOOGLE_MAIL_REFRESH_TOKEN', null),
         'tuyendungRefreshToken' => env('TuyendungMail_GOOGLE_MAIL_REFRESH_TOKEN', null),
+        'nhamayRefreshToken' => env('NhamayMail_GOOGLE_MAIL_REFRESH_TOKEN', null),
     ]
 ];
